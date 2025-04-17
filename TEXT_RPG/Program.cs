@@ -1,4 +1,6 @@
-﻿namespace TEXT_RPG
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace TEXT_RPG
 {
     internal class Program
     {
@@ -10,8 +12,30 @@
         }
         class GameLogic
         {
-            List<InventoryList> inventoryList = new List<InventoryList>();
+            List<Item> inventoryList = new List<Item>();
             List<Item> itemList = new List<Item>();
+            public void ItemList()
+            {
+                itemList.Add(new Item("나무검     ", "나무로 만들어진 검          ", "무기", 100, 10, 1));
+                itemList.Add(new Item("나무 방패  ", "나무로 만들어진 방패        ", "방어구", 100, 5, 2));
+                itemList.Add(new Item("나무 활    ", "나무로 만들어진 활          ", "무기", 100, 8, 3));
+                itemList.Add(new Item("마법 지팡이", "마법을 사용할 수 있는 지팡이", "무기", 100, 15, 4));
+            }
+            public void ItemListPrint()
+            {
+                foreach (var item in itemList)
+                {
+                    if (item.Type == "무기") 
+                    {
+                        Console.WriteLine($"{item.Name} | 공격력 +{item.Power} | {item.Info}");
+                    }
+                    else if (item.Type == "무기")
+                    {
+                        Console.WriteLine($"{item.Name} | 방어력 +{item.Power} | {item.Info}");
+                    }
+                    
+                }
+            }
             int Action = 0;
             Job job = new Job();
             bool SceneMove = false;
@@ -23,7 +47,7 @@
 
             void Start()
             {
-                
+                ItemList();
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.\n이름을 설정해주세요.");
                 Console.Write(">>");
                 player.Name = Console.ReadLine();//이름받기
@@ -165,13 +189,25 @@
             {
                 while (true)
                 {
-                    Console.WriteLine("상점 보기\n상점의 정보가 표시됩니다.");
+                    Console.WriteLine("상점\n필요한 아이템을 얻을 수 있는 상점입니다.");
+                    Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
+                    ItemListPrint();
                     Console.Write("1.아이템 구매\n0.나가기\n>>");
                     while (!int.TryParse(Console.ReadLine(), out Action) && 0 <= Action || Action >= 1)
                     {
                         //상점 정보
                     }
                     Console.Clear();
+                    if (Action == 0)
+                    {
+                        Console.Clear();
+                        return;
+                    }
+                    else if (Action == 1)
+                    {
+                        Console.Clear();
+                        //아이템 구매
+                    }
                     return;
                 }
                
@@ -204,27 +240,7 @@
                 public int Level { get; set; } = 1;
                 public int Gold { get; set; } = 1500;
             }
-            class InventoryList
-            {
-                public string Name { get; set; }
-                public string Info { get; set; }
-                public string Type { get; set; }
-                public int ItemID { get; set; }
-                public int Price { get; set; }
-                public int Power { get; set; }
-                public bool IsEquipped { get; set; } = false;
-                public bool IsBuy { get; set; } = true;
-                public bool IsUsable { get; set; } = false;
-                public InventoryList(string name, string info, string type, int price, int power, int itemID)
-                {
-                    Name = name;
-                    Info = info;
-                    Type = type;
-                    Price = price;
-                    Power = power;
-                    ItemID = itemID;
-                }
-            }
+            
             class Item
             {
                 public string Name { get; set; }
@@ -259,12 +275,6 @@
                 Shop,
                 Dungeon,
             }
-
-
-
-
-
-
 
         }
 
