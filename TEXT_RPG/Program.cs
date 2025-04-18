@@ -14,13 +14,13 @@ namespace TEXT_RPG
         {
             List<Item> InventoryList = new List<Item>();
             List<Item> itemList = new List<Item>();
-            public void InventoryPrint()
+            public void InventoryPrint()//인벤토리 리스트 출력
             {
                 foreach (var item in InventoryList)
                 {
-                    if (item.Type == "무기")
+                    if (item.Type == "무기")//아이템 종류 확인
                     {
-                        if (item.IsEquipped)
+                        if (item.IsEquipped)//장착여부
                         {
                             Console.WriteLine($"{InventoryList.IndexOf(item) + 1}.{item.Name} | 공격력 +{item.Power} | {item.Info}[E]");
                         }
@@ -29,9 +29,9 @@ namespace TEXT_RPG
                             Console.WriteLine($"{InventoryList.IndexOf(item) + 1}.{item.Name} | 공격력 +{item.Power} | {item.Info}");
                         }
                     }
-                    else if (item.Type == "방어구")
+                    else if (item.Type == "방어구")//아이템 종류 확인
                     {
-                        if (item.IsEquipped)
+                        if (item.IsEquipped)//장착여부
                         {
                             Console.WriteLine($"{InventoryList.IndexOf(item) + 1}.{item.Name} | 방어력 +{item.Power} | {item.Info}[E]");
                         }
@@ -43,17 +43,17 @@ namespace TEXT_RPG
 
                 }
             }
-            
+
             int Action = 0;
             Job job = new Job();
             bool SceneMove = false;
             Player player = new Player();
-            public void StartGame()
+            public void StartGame()//게임의 시작부분(초기값)
             {
                 Start();
             }
 
-            void Start()
+            void Start()//시작하면 가장먼저 실행되는부분
             {
                 ItemList();
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.\n이름을 설정해주세요.");
@@ -68,6 +68,7 @@ namespace TEXT_RPG
                     Console.Write(">>");
                     player.Name = Console.ReadLine();
                 }
+                Console.Clear();
                 Console.WriteLine($"안녕하세요 {player.Name}님\n직업을 선택해주세요.");
                 foreach (var item in Enum.GetValues(typeof(Job)))//직업 선택
                 {
@@ -94,13 +95,14 @@ namespace TEXT_RPG
             {
                 while (true)
                 {
+                    Console.Clear();
                     Console.WriteLine($"스파르타 마을에 오신것을 환영합니다.{player.Name}님\n이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.");
                     foreach (var item in Enum.GetValues(typeof(VillageActiveList)))//마을에서 활동가능한 목록 출력
                     {
                         Console.WriteLine($"{(int)item}.{item}");
                     }
                     Console.Write(">>");
-                    while (!int.TryParse(Console.ReadLine(), out Action) && 1 <= Action && Action >= 4)
+                    while (!int.TryParse(Console.ReadLine(), out Action) && 1 <= Action && Action >= 5)
                     {
                         Console.WriteLine("잘못된 입력입니다.");
                         Thread.Sleep(500);
@@ -111,7 +113,7 @@ namespace TEXT_RPG
                             Console.WriteLine($"{(int)item}.{item}");
                         }
                         Console.Write(">>");
-                    }//마을에서 활동가능한 목록 출력
+                    }
                     switch (Action)
                     {
                         case 1:
@@ -130,6 +132,10 @@ namespace TEXT_RPG
                             Console.Clear();
                             Dungeon();
                             break;
+                        case 5:
+                            Console.Clear();
+                            Rest();
+                            break;
                         default:
                             Console.WriteLine("잘못된 입력입니다.");
                             Thread.Sleep(500);
@@ -140,7 +146,7 @@ namespace TEXT_RPG
 
 
             }
-            void Status()
+            void Status()//상태창
             {
                 while (true)
                 {
@@ -164,7 +170,7 @@ namespace TEXT_RPG
 
 
             }
-            void Inventory()
+            void Inventory()//인벤토리
             {
                 while (true)
                 {
@@ -177,30 +183,36 @@ namespace TEXT_RPG
                     {
                         Console.WriteLine("인벤토리 - 장착 관리\n보유 중인 아이템을 관리할 수 있습니다.");
                         Console.WriteLine("\n[아이템 목록]");
-                        InventoryPrint();
-                        Console.Write("장비를 장착,해제하려면 숫자를 눌러주세요\n0.나가기\n>>");
+                        if (InventoryList.Count == 0)//아이템이 없으면 출력
+                        {
+                            Console.WriteLine("\n보유하신 아이템이 없습니다.\n상점에서 구매하거나, 추후에 나올 던전에서 찾아보세요!\n");
+                        }
+                        else//아이템이 있으면 리스트출력
+                        {
+                            InventoryPrint();
+                        }
+                            Console.Write("장비를 장착,해제하려면 숫자를 눌러주세요\n0.나가기\n>>");
                     }
                     if (Action == 0)
                     {
                         Console.Clear();
                         return;
                     }
-                    else if (1 <= Action && Action <= InventoryList.Count)
+                    else if (1 <= Action && Action <= InventoryList.Count)//아이템 범위
                     {
-                        if (InventoryList[Action - 1].IsEquipped)
-                        {
-                            InventoryList[Action - 1].IsEquipped = false;
-                        }
-                        else if (!InventoryList[Action - 1].IsEquipped)
-                        {
-                            InventoryList[Action - 1].IsEquipped = true;
-                        }
-
+                            if (InventoryList[Action - 1].IsEquipped)
+                            {
+                                InventoryList[Action - 1].IsEquipped = false;
+                            }
+                            else if (!InventoryList[Action - 1].IsEquipped)
+                            {
+                                InventoryList[Action - 1].IsEquipped = true;
+                            }
                     }
                 }
 
             }
-            public void Shop()
+            public void Shop()//상점
             {
                 while (true)
                 {
@@ -209,7 +221,7 @@ namespace TEXT_RPG
                     Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
                     ItemListPrint();
                     Console.Write("\n\n아이템을 구매하시려면 아이템의 번호를 입력해주세요.\n0.나가기\n>>");
-                    while (!int.TryParse(Console.ReadLine(), out Action) && 0 <= Action && Action >= itemList.Count)
+                    while (!int.TryParse(Console.ReadLine(), out Action) && 0 <= Action && Action >= itemList.Count)//리스트 이외의 값은 다시받음.
                     {
                         Console.Clear();
                         Console.WriteLine("상점\n필요한 아이템을 얻을 수 있는 상점입니다.");
@@ -224,25 +236,44 @@ namespace TEXT_RPG
                         Console.Clear();
                         return;
                     }
-                    else if (1 <= Action && Action <= itemList.Count)
+                    else if (1 <= Action && Action <= itemList.Count)//아이템 범위지정
                     {
-                        Console.Clear();
-                        itemList[Action - 1].IsBuy = true;
-                        player.Gold -= itemList[Action - 1].Price;
-                        InventoryList.Add(itemList[Action - 1]);
-                        
-                        
+                        if (itemList[Action - 1].IsBuy)//구매여부확인
+                        {
+                            Console.WriteLine("품절된 아이템입니다.");
+                        }
+                        else if (!itemList[Action - 1].IsBuy)//구매여부확인
+                        {
+                            if (player.Gold < itemList[Action - 1].Price)//골드 확인
+                            {
+                                Console.WriteLine("Gold가 부족합니다.");
+                                Thread.Sleep(500);
+                                continue;
+                            }
+                            else if (player.Gold >= itemList[Action - 1].Price)//골드확인
+                            {
+                                Console.WriteLine($"{itemList[Action - 1].Name}을(를) 구매하셨습니다.");
+                                player.Gold -= itemList[Action - 1].Price;
+                                InventoryList.Add(itemList[Action - 1]);
+                                Thread.Sleep(500);
+                            }
+                            Console.Clear();
 
-                        //아이템 구매
-                    }
-                    else
-                    {
-                        Console.WriteLine("잘못된 입력입니다.");
-                        Thread.Sleep(500);
-                        Console.Clear();
+
+
+
+                            //아이템 구매
+                        }
+                        else
+                        {
+                            Console.WriteLine("잘못된 입력입니다.");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                        }
+
                     }
                 }
-                void ItemListPrint()
+                void ItemListPrint()//상점에 보여줄 리스트
                 {
                     foreach (var item in itemList)
                     {
@@ -250,11 +281,11 @@ namespace TEXT_RPG
                         {
                             if (item.IsBuy)
                             {
-                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.[품절] {item.Name} | 공격력 +{item.Power} | {item.Info}");
+                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.{item.Name} | 공격력 +{item.Power} | {item.Info} | 구매 완료");
                             }
                             else if (!item.IsBuy)
                             {
-                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.       {item.Name} | 공격력 +{item.Power} | {item.Info}");
+                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.{item.Name} | 공격력 +{item.Power} | {item.Info} | {item.Price}G");
                             }
 
                         }
@@ -262,11 +293,11 @@ namespace TEXT_RPG
                         {
                             if (item.IsBuy)
                             {
-                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.[품절] {item.Name} | 방어력 +{item.Power} | {item.Info}");
+                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.{item.Name} | 방어력 +{item.Power} | {item.Info} | 구매 완료");
                             }
                             else if (!item.IsBuy)
                             {
-                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.       {item.Name} | 방어력 +{item.Power} | {item.Info}");
+                                Console.WriteLine($"{itemList.IndexOf(item) + 1}.{item.Name} | 방어력 +{item.Power} | {item.Info} | {item.Price}G");
                             }
                         }
 
@@ -274,11 +305,11 @@ namespace TEXT_RPG
                 }
 
             }
-            void Dungeon()
+            void Dungeon()//나중에 추가할 던전
             {
                 while (true)
                 {
-                    Console.WriteLine("던전 선택\n던전의 정보가 표시됩니다.");
+                    Console.WriteLine("던전 선택\n던전의 정보가 표시됩니다.(업데이트 예정!)");
                     Console.Write("1.던전 선택\n0.마을로 가기\n>>");
                     while (!int.TryParse(Console.ReadLine(), out Action) && 0 <= Action && Action >= 1)
                     {
@@ -289,10 +320,22 @@ namespace TEXT_RPG
                 }
 
             }
+            void Rest()//휴식
+            {
+                if (player.Health<100)
+                {
+                    Console.WriteLine("충분한 휴식으로 체력이 전부회복되었습니다.");
+                    player.Health = 100;
+                }
+                else if (player.Health==100)
+                {
+                    Console.WriteLine("체력이 충분한 것 같다.");
+                }
+            }
 
 
 
-            class Player
+            class Player//플레이어 기본틀
             {
                 public string Job { get; set; }
                 public string Name { get; set; }
@@ -303,7 +346,7 @@ namespace TEXT_RPG
                 public int Gold { get; set; } = 1500;
             }
 
-            class Item
+            class Item//아이템 기본틀
             {
                 public string Name { get; set; }
                 public string Info { get; set; }
@@ -325,8 +368,8 @@ namespace TEXT_RPG
                 }
             }
 
-            public void ItemList()
-            { 
+            public void ItemList()//아이템 목록(상점에 적용됨)
+            {
                 itemList.Add(new Item("나무검     ", "      나무로 만들어진 검    ", "무기", 100, 10, 1));
                 itemList.Add(new Item("나무 방패  ", "      나무로 만들어진 방패  ", "방어구", 100, 5, 2));
                 itemList.Add(new Item("나무 활    ", "      나무로 만들어진 활    ", "무기", 100, 8, 3));
@@ -335,18 +378,19 @@ namespace TEXT_RPG
                 itemList.Add(new Item("낡은 신발  ", "      오래되어 낡아있다.    ", "방어구", 100, 3, 6));
 
             }
-            enum Job
+            enum Job//직업목록
             {
                 Warrior = 1,
                 Mage,
                 Archer,
             }
-            enum VillageActiveList
+            enum VillageActiveList//마을에서 할수있는 활동목록
             {
                 Status = 1,
                 Inventory,
                 Shop,
                 Dungeon,
+                Rest
             }
 
         }
