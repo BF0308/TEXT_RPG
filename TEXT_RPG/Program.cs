@@ -209,45 +209,35 @@
                 }
                 void inventorySwap(int Action)//아이템 장착/해제
                 {
-                    if (InventoryList[Action - 1].IsEquipped)
+                    var selectedItem = InventoryList[Action - 1];
+
+                    if (selectedItem.IsEquipped)
                     {
-                        InventoryList[Action - 1].IsEquipped = false;
+                        // 선택한 아이템이 이미 장착되어 있으면 해제
+                        selectedItem.IsEquipped = false;
+                        Console.WriteLine($"{selectedItem.Name}이(가) 해제되었습니다.");
                     }
-                    else if (!InventoryList[Action - 1].IsEquipped)
+                    else
                     {
-                        // 현재 장착된 무기가 있는지 확인
-                        if (InventoryList.Any(item => item.Type == "무기" && item.IsEquipped))
+                        // 선택한 아이템의 타입에 따라 같은 타입의 장비를 해제
+                        if (selectedItem.Type == "무기" && InventoryList.Any(item => item.Type == "무기" && item.IsEquipped))
                         {
-                            // 이미 장착된 무기를 찾아서 해제
                             var equippedWeapon = InventoryList.First(item => item.Type == "무기" && item.IsEquipped);
                             Console.WriteLine($"{equippedWeapon.Name}이(가) 해제되었습니다.");
                             equippedWeapon.IsEquipped = false;
                         }
-                        if (InventoryList.Any(item => item.Type == "방어구" && item.IsEquipped))
+                        else if (selectedItem.Type == "방어구" && InventoryList.Any(item => item.Type == "방어구" && item.IsEquipped))
                         {
-                            // 이미 장착된 무기를 찾아서 해제
-                            var equippedWeapon = InventoryList.First(item => item.Type == "방어구" && item.IsEquipped);
-                            Console.WriteLine($"{equippedWeapon.Name}이(가) 해제되었습니다.");
-                            equippedWeapon.IsEquipped = false;
+                            var equippedArmor = InventoryList.First(item => item.Type == "방어구" && item.IsEquipped);
+                            Console.WriteLine($"{equippedArmor.Name}이(가) 해제되었습니다.");
+                            equippedArmor.IsEquipped = false;
                         }
 
-                        // 선택한 아이템을 장착 또는 해제
-                        if (InventoryList[Action - 1].IsEquipped)
-                        {
-                            Console.WriteLine($"{InventoryList[Action - 1].Name}이(가) 해제되었습니다.");
-                            InventoryList[Action - 1].IsEquipped = false;
-                        }
-                        else
-                        {
-                            Console.WriteLine($"{InventoryList[Action - 1].Name}이(가) 장착되었습니다.");
-                            InventoryList[Action - 1].IsEquipped = true;
-                        }
+                        // 선택한 아이템을 장착
+                        selectedItem.IsEquipped = true;
+                        Console.WriteLine($"{selectedItem.Name}이(가) 장착되었습니다.");
                     }
-                    
-
-
-
-
+                    Thread.Sleep(500);
                 }
             }
             public void Shop()//상점
@@ -436,14 +426,14 @@
                 while (true)
                 {
                     Console.Clear();
-                    Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {player.Gold} G)");
+                    Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 전부 회복할 수 있습니다. (보유 골드 : {player.Gold} G)\n현재 체력[{player.Health}]");
                     Console.Write("\n\n1.휴식하기\n0.나가기\n>>");
                     while (!int.TryParse(Console.ReadLine(), out Action) || 0 > Action || Action > 1)//리스트 이외의 값은 다시받음.
                     {
                         Console.WriteLine("잘못된 입력입니다.");
                         Thread.Sleep(500);
                         Console.Clear();
-                        Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {player.Gold} G)");
+                        Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 전부 회복할 수 있습니다. (보유 골드 : {player.Gold} G)\n현재 체력[{player.Health}]");
                         Console.Write("\n\n1.휴식하기\n0.나가기\n>>");
                     }
                     if (Action == 0)
@@ -452,21 +442,27 @@
                     }
                     else if (Action == 1)
                     {
-                        if (player.Gold < 500)
+                        if (player.Health == 100)
                         {
-                            Console.WriteLine("Gold가 부족합니다.");
-                            Thread.Sleep(500);
+                            Console.WriteLine("체력이 이미 가득차있습니다.");
                         }
-                        else if (player.Gold >= 500)
+                        else
                         {
-                            player.Gold -= 500;
-                            player.Health = 100;
-                            Console.WriteLine("체력이 회복되었습니다.");
-                            Thread.Sleep(500);
+                            if (player.Gold < 500)
+                            {
+                                Console.WriteLine("Gold가 부족합니다.");
+                            }
+                            else if (player.Gold >= 500)
+                            {
+                                player.Gold -= 500;
+                                player.Health = 100;
+                                Console.WriteLine("체력이 회복되었습니다.");
+                            }
                         }
+                        Thread.Sleep(500);
                     }
                 }
-                
+
             }
 
 
