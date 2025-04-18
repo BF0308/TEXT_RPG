@@ -433,15 +433,40 @@
             }
             void Rest()//휴식
             {
-                if (player.Health < 100)
+                while (true)
                 {
-                    Console.WriteLine("충분한 휴식으로 체력이 전부회복되었습니다.");
-                    player.Health = 100;
+                    Console.Clear();
+                    Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {player.Gold} G)");
+                    Console.Write("\n\n1.휴식하기\n0.나가기\n>>");
+                    while (!int.TryParse(Console.ReadLine(), out Action) || 0 > Action || Action > 1)//리스트 이외의 값은 다시받음.
+                    {
+                        Console.WriteLine("잘못된 입력입니다.");
+                        Thread.Sleep(500);
+                        Console.Clear();
+                        Console.WriteLine($"휴식하기\n500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {player.Gold} G)");
+                        Console.Write("\n\n1.휴식하기\n0.나가기\n>>");
+                    }
+                    if (Action == 0)
+                    {
+                        return;
+                    }
+                    else if (Action == 1)
+                    {
+                        if (player.Gold < 500)
+                        {
+                            Console.WriteLine("Gold가 부족합니다.");
+                            Thread.Sleep(500);
+                        }
+                        else if (player.Gold >= 500)
+                        {
+                            player.Gold -= 500;
+                            player.Health = 100;
+                            Console.WriteLine("체력이 회복되었습니다.");
+                            Thread.Sleep(500);
+                        }
+                    }
                 }
-                else if (player.Health == 100)
-                {
-                    Console.WriteLine("체력이 충분한 것 같다.");
-                }
+                
             }
 
 
